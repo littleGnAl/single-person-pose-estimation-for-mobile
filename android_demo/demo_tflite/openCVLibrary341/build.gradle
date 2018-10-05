@@ -94,7 +94,7 @@ println "OpenCV: " + project.buildscript.sourceFile
 
 android {
     compileSdkVersion buildConfig.compileSdk
-    buildToolsVersion buildConfig.buildTools
+    buildToolsVersion '28.0.2'
     //buildToolsVersion "27.0.3" // not needed since com.android.tools.build:gradle:3.0.0
 
     defaultConfig {

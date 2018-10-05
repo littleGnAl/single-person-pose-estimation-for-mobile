@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion buildConfig.compileSdk
-    buildToolsVersion buildConfig.buildTools
+    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "com.edvard.poseestimation"
         minSdkVersion buildConfig.minSdk
@@ -14,18 +14,11 @@ android {
 
         externalNativeBuild {
             cmake {
-                arguments  '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'
-                cppFlags "-std=c++11","-frtti", "-fexceptions"
+                arguments '-DANDROID_STL=gnustl_static'
             }
         }
         ndk {
             abiFilters 'armeabi-v7a'
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
         }
     }
 
