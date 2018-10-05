@@ -1,0 +1,64 @@
+version: 2
+
+workspace: &workspace
+    ~/PoseEstimationForMobile
+
+android_build_environment: &android_build_environment
+    working_directory: *workspace
+    docker:
+        - image: circleci/api-28-ndk-r17b
+    environment:
+        JVM_OPTS: -Xmx3200m
+
+cache_key: &cache_key
+    key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "versions.gradle"}}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+restore_cache: &restore_cache
+    restore_cache:
+        <<: *cache_key
+
+save_cache: &save_cache
+    save_cache:
+        <<: *cache_key
+        paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+            - ~/.m2
+
+persist_tflite_apk_to_workspace: &persist_apk_to_workspace
+    persist_to_workspace:
+        root: .
+        paths:
+            - demo_tflite/app/build/outputs/apk
+
+persist_mace_apk_to_workspace: &persist_apk_to_workspace
+    persist_to_workspace:
+        root: .
+        paths:
+            - app/build/outputs/apk
+
+attach_workspace: &attach_workspace
+    attach_workspace:
+        at: *workspace
+
+jobs:
+    build:
+        <<: *android_build_environment
+        steps:
+            - checkout 
+            - *restore_cache
+
+            - run:
+                name: Generating tflite apk
+                command: demo_tflite/gradlew :app:assembleDebug
+            - store_artifacts:
+                path: demo_tflite/app/build/outputs/apk
+                destination: apk
+
+            - *save_cache
+            - *persist_tflite_apk_to_workspace
+
+    # upload_apk:
+    #     <<: *android_build_environment
+    #     steps:
+            
