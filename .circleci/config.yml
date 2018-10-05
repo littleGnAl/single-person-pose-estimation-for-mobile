@@ -11,7 +11,7 @@ android_build_environment: &android_build_environment
         JVM_OPTS: -Xmx3200m
 
 cache_key: &cache_key
-    key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}-{{ checksum "versions.gradle"}}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+    key: jars-{{ checksum "android_demo/demo_tflite/build.gradle" }}-{{ checksum "android_demo/demo_tflite/app/build.gradle" }}-{{ checksum "android_demo/demo_tflite/gradle/wrapper/gradle-wrapper.properties" }}
 
 restore_cache: &restore_cache
     restore_cache:
@@ -21,17 +21,17 @@ save_cache: &save_cache
     save_cache:
         <<: *cache_key
         paths:
-            - ~/.gradle/caches
-            - ~/.gradle/wrapper
+            - ~android_demo/demo_tflite/.gradle/caches
+            - ~android_demo/demo_tflite/.gradle/wrapper
             - ~/.m2
 
-persist_tflite_apk_to_workspace: &persist_apk_to_workspace
+persist_tflite_apk_to_workspace: &persist_tflite_apk_to_workspace
     persist_to_workspace:
         root: .
         paths:
-            - demo_tflite/app/build/outputs/apk
+            - android_demo/demo_tflite/app/build/outputs/apk
 
-persist_mace_apk_to_workspace: &persist_apk_to_workspace
+persist_mace_apk_to_workspace: &persist_mace_apk_to_workspace
     persist_to_workspace:
         root: .
         paths:
@@ -50,9 +50,11 @@ jobs:
 
             - run:
                 name: Generating tflite apk
-                command: demo_tflite/gradlew :app:assembleDebug
+                command: |
+                    cd android_demo/demo_tflite
+                    ./gradlew :app:assembleDebug
             - store_artifacts:
-                path: demo_tflite/app/build/outputs/apk
+                path: android_demo/demo_tflite/app/build/outputs/apk
                 destination: apk
 
             - *save_cache
