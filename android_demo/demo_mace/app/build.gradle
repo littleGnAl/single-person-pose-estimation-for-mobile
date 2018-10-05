@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "android.example"
         minSdkVersion 21
@@ -10,10 +10,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        jackOptions {
-            enabled true
-        }
 
         externalNativeBuild {
             cmake {

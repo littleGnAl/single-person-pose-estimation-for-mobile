@@ -11,7 +11,7 @@ android_build_environment: &android_build_environment
         JVM_OPTS: -Xmx3200m
 
 cache_key: &cache_key
-    key: jars-{{ checksum "android_demo/demo_tflite/build.gradle" }}-{{ checksum "android_demo/demo_tflite/app/build.gradle" }}-{{ checksum "android_demo/demo_tflite/gradle/wrapper/gradle-wrapper.properties" }}
+    key: jars-{{ checksum "android_demo/demo_tflite/build.gradle" }}-{{ checksum "android_demo/demo_tflite/app/build.gradle" }}-{{ checksum "android_demo/demo_tflite/gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "android_demo/demo_mace/build.gradle" }}-{{ checksum "android_demo/demo_mace/app/build.gradle" }}-{{ checksum "android_demo/demo_mace/gradle/wrapper/gradle-wrapper.properties" }}
 
 restore_cache: &restore_cache
     restore_cache:
@@ -21,8 +21,10 @@ save_cache: &save_cache
     save_cache:
         <<: *cache_key
         paths:
-            - ~android_demo/demo_tflite/.gradle/caches
-            - ~android_demo/demo_tflite/.gradle/wrapper
+            - android_demo/demo_tflite/.gradle/caches
+            - android_demo/demo_tflite/.gradle/wrapper
+            - android_demo/demo_mace/.gradle/caches
+            - android_demo/demo_mace/.gradle/wrapper
             - ~/.m2
 
 persist_tflite_apk_to_workspace: &persist_tflite_apk_to_workspace
@@ -31,11 +33,12 @@ persist_tflite_apk_to_workspace: &persist_tflite_apk_to_workspace
         paths:
             - android_demo/demo_tflite/app/build/outputs/apk
 
-persist_mace_apk_to_workspace: &persist_mace_apk_to_workspace
+persist_apk_to_workspace: &persist_apk_to_workspace
     persist_to_workspace:
         root: .
         paths:
-            - app/build/outputs/apk
+            - android_demo/demo_tflite/app/build/outputs/apk
+            - android_demo/demo_mace/app/build/outputs/apk
 
 attach_workspace: &attach_workspace
     attach_workspace:
@@ -57,8 +60,27 @@ jobs:
                 path: android_demo/demo_tflite/app/build/outputs/apk
                 destination: apk
 
+            - run:
+                name: Generating mace apk
+                command: |
+                    docker pull registry.cn-hangzhou.aliyuncs.com/xiaomimace/mace-dev-lite
+                    docker run -it
+                        --privileged -d --name mace-dev 
+                        --net=host 
+                        -v /home/circleci/PoseEstimationForMobile/android_demo/demo_mace:/demo_mace 
+                        registry.cn-hangzhou.aliyuncs.com/xiaomimace/mace-dev-lite
+                    docker run -it --privileged -d --name mace-dev --net=host \
+                            -v /home/circleci/PoseEstimationForMobile/android_demo/demo_mace:/demo_mace  \
+                            registry.cn-hangzhou.aliyuncs.com/xiaomimace/mace-dev-lite
+                    docker exec -it mace-dev bash
+                    cd android_demo/demo_mace
+                    ./gradlew :app:assembleDebug
+            - store_artifacts:
+                path: android_demo/demo_mace/app/build/outputs/apk
+                destination: apk
+
             - *save_cache
-            - *persist_tflite_apk_to_workspace
+            - *persist_apk_to_workspace
 
     # upload_apk:
     #     <<: *android_build_environment
