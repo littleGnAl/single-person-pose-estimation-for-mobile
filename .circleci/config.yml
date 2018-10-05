@@ -60,6 +60,8 @@ jobs:
                 path: android_demo/demo_tflite/app/build/outputs/apk
                 destination: apk
 
+            - setup_remote_docker:  
+                docker_layer_caching: true
             - run:
                 name: Generating mace apk
                 command: |
