@@ -71,7 +71,7 @@ jobs:
                     cd /demo_mace
                     rm -rf local.properties
                     ./gradlew :app:assembleDebug
-                no_output_timeout: 1h
+                no_output_timeout: 30m
             - store_artifacts:
                 path: android_demo/demo_mace/app/build/outputs/apk
                 destination: apk
