@@ -66,14 +66,12 @@ jobs:
                 name: Generating mace apk
                 command: |
                     docker pull registry.cn-hangzhou.aliyuncs.com/xiaomimace/mace-dev-lite
-                    docker run -it --privileged -d --name mace-dev --net=host -v /home/circleci/PoseEstimationForMobile/android_demo/demo_mace:/demo_mace registry.cn-hangzhou.aliyuncs.com/xiaomimace/mace-dev-lite
+                    docker run --privileged -d --name mace-dev --net=host -v /home/circleci/PoseEstimationForMobile/android_demo/demo_mace:/demo_mace registry.cn-hangzhou.aliyuncs.com/xiaomimace/mace-dev-lite
                     docker exec -it mace-dev bash
                     cd /demo_mace
                     rm -rf local.properties
                     ./gradlew :app:assembleDebug
-                    exit
-                    docker container stop mace-dev
-                no_output_timeout: 30m
+                no_output_timeout: 10m
             - store_artifacts:
                 path: android_demo/demo_mace/app/build/outputs/apk
                 destination: apk
