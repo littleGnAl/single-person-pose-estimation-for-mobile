@@ -5,7 +5,7 @@ workspace: &workspace
 
 android_build_environment: &android_build_environment
     working_directory: *workspace
-    docker:
+    machine:
         - image: circleci/android:api-28-ndk-r17b
     environment:
         JVM_OPTS: -Xmx3200m
@@ -68,8 +68,8 @@ jobs:
                     docker pull edvardhua/mace-dev-lite
                     docker run -it --privileged -d --name mace-dev --net=host -v /home/circleci/PoseEstimationForMobile/android_demo/demo_mace:/demo_mace edvardhua/mace-dev-lite
                     # docker run -it --privileged -d --name mace-dev --net=host -v /Users/littlegnal_feng/codes/git-clone/single-person-pose-estimation-for-mobile/android_demo/demo_mace:/demo_mace edvardhua/mace-dev-lite
-                    ls /home/circleci/PoseEstimationForMobile/android_demo/demo_mace
-                    docker exec mace-dev bash -c "cd /demo_mace && pwd && ls -l && rm -rf local.properties && ./gradlew :app:assembleDebug"
+                    # ls /home/circleci/PoseEstimationForMobile/android_demo/demo_mace
+                    docker exec mace-dev bash -c "ls -l && cd /demo_mace && pwd && ls -l && rm -rf local.properties && ./gradlew :app:assembleDebug"
                     # cd /demo_mace
                     # rm -rf local.properties
                     # ./gradlew :app:assembleDebug
