@@ -46,9 +46,7 @@ attach_workspace: &attach_workspace
 
 jobs:
     build:
-        working_directory: *workspace
-        machine:
-            - image: circleci/android:api-28-ndk-r17b
+        <<: *android_build_environment
         steps:
             - checkout 
             - *restore_cache
